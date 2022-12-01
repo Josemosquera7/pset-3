@@ -7,7 +7,7 @@
 
 ##packages
 require(pacman)
-p_load(idyverse, rio,estimatr,lmtest,fixest, modelsummary, stargazer)
+p_load(tidyverse, rio, arrow, broom, mfx, margins,estimatr,lmtest,fixest, modelsummary, stargazer, writexl)
 
 ##Punto 1
 
@@ -24,7 +24,16 @@ modelo_3 <- lm(price ~ surface_total +  rooms + bathrooms + as.factor(property_t
 tabla_resultados <- msummary(list(modelo_1, modelo_2, modelo_3))
 tabla_resultados
 
+# Punto 1.3 exportar
+stargazer(modelo_1, modelo_2, modelo_3, type = "html", out = "output/resultados_regresiones.xls")
 
+export(tabla_resultados, "output/resultados.xlsx")
+write_xlsx(tabla_resultados, "output/tabla_resultadosprueba.xlsx")
+## Graficar y exportar
+mods <- list("Modelo 1"= modelo_1, "Modelo 2"= modelo_2, "Modelo 3"= modelo_3)
+png(filename = "output/plot_regresiones.png", width = 800, height = 600)
+modelplot(mods) + coord_flip() + labs(title = "Precio de la vivienda", subtitle = "comparación entre los tres modelos")
+dev.off()
 
 
 ##Punto 2
