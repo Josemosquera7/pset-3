@@ -1,6 +1,6 @@
 # Jose Esteban Mosquera - 202110281
 # David Chaparro - 202023984
-# Santiago Huertas -
+# Santiago Huertas - 202021311
 
 # Problem Set 3 - Taller de R estadistica y programacion 
 # Profesor Eduard Martinez
@@ -105,3 +105,34 @@ map <- ggmap(osm_layer) +
   geom_sf(data=parques, aes(color="blue"), inherit.aes = F)+
   geom_sf(data=alcaldia_bucaramanga, aes(color="green"),inherit.aes = F)+
   scale_color_manual(labels=c("red"="restaurantes bucaramanga","green"="alcaldia bucaramanga"))
+
+
+
+##Punto 3 Web-scraping y procesamiento de texto
+
+rm(list=ls())
+require(pacman)
+p_load(tidyverse,rio,data.table,
+       rvest,xml2,
+       textcat,stringi,cluster,wordcloud, tm, writexl) 
+
+##Punto 3.1
+
+##Se crea el objeto xml_document que tiene el html de la pagina de wikipedia
+wiki<- "https://es.wikipedia.org/wiki/Departamentos_de_Colombia"
+xml_document <-read_html(wiki) ## leer el html de la página
+
+## Punto 3.2 
+
+xml_document %>% html_node(xpath='//*[@id="firstHeading"]')
+
+##Punto 3.3 
+
+my_table = xml_document %>% html_table()
+
+length(my_table)
+
+tabla_departamento<-my_table[[4]]
+
+
+write_xlsx(tabla_departamento,"Output/tabla_departamento.xlsx")
