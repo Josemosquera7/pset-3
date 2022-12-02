@@ -4,7 +4,7 @@
 
 # Problem Set 3 - Taller de R estadistica y programacion 
 # Profesor Eduard Martinez
-
+rm(list=ls())
 ##packages
 require(pacman)
 p_load(tidyverse, rio, arrow, broom, mfx, margins,estimatr,lmtest,fixest, modelsummary, stargazer, writexl)
@@ -99,21 +99,33 @@ leaflet() %>% addTiles() %>% addCircles(data=alcaldia_bucaramanga, color = "gree
 ##inciso 4
 
 ##primero, obtendremos el polygono para bucaramanga con fines esteticos
-buc <- opq(bbox = getbb("Bucaramanga Colombia")) %>% 
+##primero, obtendremos el polygono para bucaramanga con fines esteticos
+buc_osm <- opq(bbox = getbb("Bucaramanga, Colombia")) %>%
   add_osm_feature(key="boundary", value="administrative") %>%
   osmdata_sf()
-buc <- buc$osm_multipolygons %>% subset(admin_level==6) %>% subset(name=="Bucaramanga")
-buc
+
+buc <- buc_osm$osm_multipolygons %>% subset(admin_level==8)
+
+buc <- st_transform(x = buc , crs = 4326)
+
+buc <- buc %>% st_union()
+
+leaflet() %>% addTiles() %>% addPolygons(data = buc , color="red")
+
 ## add osm layer
-osm_layer <- get_stamenmap(bbox= as.vector(st_bbox(buc)), maptype="toner-lines", source="osm", zoom=12) 
-
-map <- ggmap(osm_layer) + 
+osm_layer <- get_stamenmap(bbox= as.vector(st_bbox(buc)), maptype="toner-line", source="osm", zoom=14)
+##guardamos el mapa usando ggmap
+map <- ggmap(osm_layer) +
   geom_sf(data=buc, alpha=0.3 , inherit.aes=F) +
-  geom_sf(data=restaurantes, aes(color="red"), inherit.aes = F) + 
-  geom_sf(data=parques, aes(color="blue"), inherit.aes = F)+
-  geom_sf(data=alcaldia_bucaramanga, aes(color="green"),inherit.aes = F)+
-  scale_color_manual(labels=c("red"="restaurantes bucaramanga","green"="alcaldia bucaramanga"))
-
+  geom_sf(data=restaurantes, aes(color="A"), inherit.aes = F) +
+  geom_sf(data=parques, aes(color="B"), inherit.aes = F)+
+  geom_sf(data=alcaldia_bucaramanga, aes(color="C"),inherit.aes = F)+
+  scale_color_manual(labels=c("A"="Restaurantes","B"="Parques" , "C"="Alcaldia Bucaramanga"),
+                     values=c("A"="red","B"="green" , "C"="blue"))
+##le agregamos un tema
+map <- map + theme_test()
+##exportar como png                        
+ggsave("mapa.png", map)
 
 
 ##Punto 3 Web-scraping y procesamiento de texto
