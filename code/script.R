@@ -125,7 +125,8 @@ map <- ggmap(osm_layer) +
 ##le agregamos un tema
 map <- map + theme_test()
 ##exportar como png                        
-ggsave("mapa.png", map)
+ggsave("output/mapa_amenities.png", map)
+
 
 
 ##Punto 3 Web-scraping y procesamiento de texto
