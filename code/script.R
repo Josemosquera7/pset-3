@@ -155,7 +155,7 @@ length(my_table)
 
 tabla_departamento<-my_table[[4]]
 
-##<Exportar la tabla a excel 
+##Exportar la tabla a excel 
 write_xlsx(tabla_departamento,"Output/tabla_departamento.xlsx")
 
 
@@ -186,7 +186,7 @@ stri_enc_mark(parrafos)
 parrafos[5]
 
 
-## Vamos a limpiar nuestros caracteres
+## Limpiar caracteres
 "todos los caracteres a minusculas"
 parrafos[5]
 parrafos = tolower(parrafos)
