@@ -123,7 +123,7 @@ rm(list=ls())
 require(pacman)
 p_load(tidyverse,rio,data.table,
        rvest,xml2,
-       textcat,stringi,cluster,wordcloud, tm, writexl) 
+       textcat,stringi,cluster,wordcloud, tm, writexl, rvest) 
 
 ##Punto 3.1
 
@@ -133,7 +133,8 @@ xml_document <-read_html(wiki) ## leer el html de la página
 
 ## Punto 3.2 
 
-xml_document %>% html_node(xpath='//*[@id="firstHeading"]')
+xml_document %>% html_node(xpath='//*[@id="firstHeading"]') %>% html_text()
+
 
 ##Punto 3.3 
 
@@ -145,3 +146,4 @@ tabla_departamento<-my_table[[4]]
 
 
 write_xlsx(tabla_departamento,"Output/tabla_departamento.xlsx")
+
