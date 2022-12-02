@@ -21,14 +21,13 @@ modelo_3 <- lm(price ~ surface_total +  rooms + bathrooms + as.factor(property_t
 
 # Punto 1.2
 
-tabla_resultados <- msummary(list(modelo_1, modelo_2, modelo_3))
+tabla_resultados <- msummary(list(modelo_1, modelo_2, modelo_3),output="data.frame")
 tabla_resultados
 
 # Punto 1.3 exportar
-stargazer(modelo_1, modelo_2, modelo_3, type = "html", out = "output/resultados_regresiones.xls")
 
-export(tabla_resultados, "output/resultados.xlsx")
-write_xlsx(tabla_resultados, "output/tabla_resultadosprueba.xlsx")
+export(tabla_resultados, "output/resultados_regresiones.xlsx")
+
 ## Graficar y exportar
 mods <- list("Modelo 1"= modelo_1, "Modelo 2"= modelo_2, "Modelo 3"= modelo_3)
 png(filename = "output/plot_regresiones.png", width = 800, height = 600)
