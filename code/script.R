@@ -161,6 +161,7 @@ write_xlsx(tabla_departamento,"Output/tabla_departamento.xlsx")
 
 ##Punto 3.4
 
+##Extraer los parrafos y guradartlos en un vector y un data frame
 parrafos<-xml_document %>% html_elements("p") %>% html_text()
 
 df_parrafos<-as.data.frame(parrafos)
@@ -172,34 +173,22 @@ stri_enc_isascii(parrafos)
 stri_enc_isutf8(parrafos)
 
 ## recodificar
-stri_enc_mark("Ábcdêãçoàúü") 
-iconv("Ábcdêãçoàúü", from = 'UTF-8', to = 'ASCII//TRANSLIT')
 
 stri_encode(parrafos,"UTF-8", "ASCII") %>% head()
 
 stri_trans_general(parrafos, "Latin-ASCII") %>% head() 
 
-stri_trans_general("Ahí está la Economía", "Latin-ASCII")
-parrafos[5]
 Encoding(parrafos) = "ASCII"
 stri_enc_mark(parrafos)
-parrafos[5]
 
 
 ## Limpiar caracteres
-"todos los caracteres a minusculas"
-parrafos[5]
 parrafos = tolower(parrafos)
-parrafos[5]
 
 ## Eliminar carcateres especiales
-str_remove_all(string="Washington (D.C.)" , pattern="[^[:alnum:] ]")
-str_replace_all(string="Washington (D.C.)" , pattern="[^[:alnum:] ]" , replacement="")
 parrafos = str_replace_all(string=parrafos , pattern="[^[:alnum:] ]" , replacement=" ")
 
 ## Eliminar  acentos
-stri_trans_general("Ahí está la Economía", "Latin-ASCII")
-stri_trans_general("Colombia in the late 1990âs", "Latin-ASCII")
 parrafos = stri_trans_general(parrafos, "Latin-ASCII")
 
 ## Remover puntuacion
@@ -223,7 +212,7 @@ parrafos = trimws(parrafos)
 
 
 ## vector de caracteres a corpues
-parrafos_corpus = Corpus(VectorSource(parrafos)) # formato de texto
+parrafos_corpus = Corpus(VectorSource(parrafos)) 
 class(parrafos_corpus)
 
 ## matriz con terminos
@@ -239,7 +228,7 @@ frecuentes = findFreqTerms(tdm_parrafos, lowfreq = 20)
 findAssocs(tdm_parrafos, frecuentes[1:5], rep(x = 0.45, rep = 50))
 
 ## Se convierte el objeto tdm_abstrac en una matriz con frecuencias
-matrix_parrafos = as.matrix(tdm_parrafos) #lo vuelve una matriz
+matrix_parrafos = as.matrix(tdm_parrafos)
 dim(matrix_parrafos)
 view(matrix_parrafos)
 
