@@ -103,13 +103,13 @@ leaflet() %>% addTiles() %>% addCircles(data=alcaldia_bucaramanga, color = "gree
 buc <- opq(bbox = getbb("Bucaramanga Colombia")) %>% 
   add_osm_feature(key="boundary", value="administrative") %>%
   osmdata_sf()
-buc <- buc$osm_multipolygons %>% subset(admin_level==6)
+buc <- buc$osm_multipolygons %>% subset(admin_level==6) %>% subset(name=="Bucaramanga")
 buc
 ## add osm layer
-osm_layer <- get_stamenmap(bbox= as.vector(st_bbox(buc)), maptype="toner", source="osm", zoom=13) 
+osm_layer <- get_stamenmap(bbox= as.vector(st_bbox(buc)), maptype="toner-lines", source="osm", zoom=12) 
 
 map <- ggmap(osm_layer) + 
-  geom_sf(data=buc , aes(fill=normal) , alpha=0.3 , inherit.aes=F) +
+  geom_sf(data=buc, alpha=0.3 , inherit.aes=F) +
   geom_sf(data=restaurantes, aes(color="red"), inherit.aes = F) + 
   geom_sf(data=parques, aes(color="blue"), inherit.aes = F)+
   geom_sf(data=alcaldia_bucaramanga, aes(color="green"),inherit.aes = F)+
