@@ -130,12 +130,12 @@ p_load(tidyverse,rio,data.table,
 wiki<- "https://es.wikipedia.org/wiki/Departamentos_de_Colombia"
 xml_document <-read_html(wiki) ## leer el html de la página
 
-## Punto 3.2 
+## Punto 3.2 extraer titulo de la pagina
 
 xml_document %>% html_node(xpath='//*[@id="firstHeading"]') %>% html_text()
 
 
-##Punto 3.3 
+##Punto 3.3 guardar tabla de departamentos
 
 my_table = xml_document %>% html_table()
 
@@ -143,6 +143,106 @@ length(my_table)
 
 tabla_departamento<-my_table[[4]]
 
-
+##<Exportar la tabla a excel 
 write_xlsx(tabla_departamento,"Output/tabla_departamento.xlsx")
 
+
+##Punto 3.4
+
+parrafos<-xml_document %>% html_elements("p") %>% html_text()
+
+df_parrafos<-as.data.frame(parrafos)
+
+
+## detectar codificacion
+stri_enc_mark(parrafos)
+stri_enc_isascii(parrafos)
+stri_enc_isutf8(parrafos)
+
+## recodificar
+stri_enc_mark("Ábcdêãçoàúü") 
+iconv("Ábcdêãçoàúü", from = 'UTF-8', to = 'ASCII//TRANSLIT')
+
+stri_encode(parrafos,"UTF-8", "ASCII") %>% head()
+
+stri_trans_general(parrafos, "Latin-ASCII") %>% head() 
+
+stri_trans_general("Ahí está la Economía", "Latin-ASCII")
+parrafos[5]
+Encoding(parrafos) = "ASCII"
+stri_enc_mark(parrafos)
+parrafos[5]
+
+
+## Vamos a limpiar nuestros caracteres
+"todos los caracteres a minusculas"
+parrafos[5]
+parrafos = tolower(parrafos)
+parrafos[5]
+
+## Eliminar carcateres especiales
+str_remove_all(string="Washington (D.C.)" , pattern="[^[:alnum:] ]")
+str_replace_all(string="Washington (D.C.)" , pattern="[^[:alnum:] ]" , replacement="")
+parrafos = str_replace_all(string=parrafos , pattern="[^[:alnum:] ]" , replacement=" ")
+
+## Eliminar  acentos
+stri_trans_general("Ahí está la Economía", "Latin-ASCII")
+stri_trans_general("Colombia in the late 1990âs", "Latin-ASCII")
+parrafos = stri_trans_general(parrafos, "Latin-ASCII")
+
+## Remover puntuacion
+parrafos = removePunctuation(parrafos)
+
+## Remover numeros
+parrafos = removeNumbers(parrafos)
+
+## Remover preposiciones y/o conectores
+stopwords("spanish") 
+parrafos = removeWords(parrafos,stopwords("spanish"))
+
+## Remover otras cadena de caracteres
+parrafos = removeWords(parrafos,c("et","abstrac","documento", "paper"))
+
+## Remover exceso de espacios
+parrafos = stripWhitespace(parrafos) 
+
+## Remover espacios iniaciales y finales
+parrafos = trimws(parrafos)
+
+
+## vector de caracteres a corpues
+parrafos_corpus = Corpus(VectorSource(parrafos)) # formato de texto
+class(parrafos_corpus)
+
+## matriz con terminos
+tdm_parrafos = TermDocumentMatrix(parrafos_corpus)
+class(tdm_parrafos)  
+dim(tdm_parrafos)
+
+## frecuencia de palabras
+findFreqTerms(tdm_parrafos, lowfreq = 20)
+frecuentes = findFreqTerms(tdm_parrafos, lowfreq = 20)
+
+## palabras con las que mas se asocian las primeras 5 palabras del vector frecuentes
+findAssocs(tdm_parrafos, frecuentes[1:5], rep(x = 0.45, rep = 50))
+
+## Se convierte el objeto tdm_abstrac en una matriz con frecuencias
+matrix_parrafos = as.matrix(tdm_parrafos) #lo vuelve una matriz
+dim(matrix_parrafos)
+view(matrix_parrafos)
+
+## Frecuencia de cada palabra
+frec_words = sort(rowSums(matrix_parrafos),decreasing=T) 
+class(frec_words)
+df_words = data.frame(word = names(frec_words) , n = frec_words)
+
+
+## Grafico nube de palabras
+wordcloud(words = df_words$word, freq = df_words$n, min.freq = 6,
+          max.words = 250 , random.order = T , rot.per = 0.35 , scale = c(10,1))
+
+
+png(filename = "output/nube_palabras.png", width = 800, height = 600)
+nube_palabras<-wordcloud(words = df_words$word, freq = df_words$n, min.freq = 1,
+                max.words = 2000 , random.order = F ,colors = brewer.pal(10, "Dark2"))
+dev.off()
