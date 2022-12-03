@@ -74,9 +74,9 @@ osm_parques_1 ##tiene informacion en poligonos, puntos y multipoligonos
 ##Podemos acceder a los elementos de la lista para crear un objeto sf
 
 ## Obtener un objeto sf
-restaurantes = osm_rest_1$osm_points %>% select(osm_id,amenity) ##Al utilizar osm_points y seleccionar la columna id, obtenemos los puntos sobre los cuales se encuentran los restaurantes en bucaramanga 
+restaurantes = osm_rest_1$osm_points %>% dplyr::select(osm_id,amenity) ##Al utilizar osm_points y seleccionar la columna id, obtenemos los puntos sobre los cuales se encuentran los restaurantes en bucaramanga 
 restaurantes
-parques <- osm_parques_1$osm_polygons %>% select(osm_id, leisure) ##Al utilizar osm_polygons y seleccionar la columna id , obtenemos los poligonos sobre los cuales se encuentran los parques en bucaramanga
+parques <- osm_parques_1$osm_polygons %>% dplyr::select(osm_id, leisure) ##Al utilizar osm_polygons y seleccionar la columna id , obtenemos los poligonos sobre los cuales se encuentran los parques en bucaramanga
 parques
 ##Con estos objetos, tenemos las ubicaciones de los lugares que queremos (restaurantes y parques en bucaramanga)
 ##Inciso 2
@@ -231,7 +231,6 @@ findAssocs(tdm_parrafos, frecuentes[1:5], rep(x = 0.45, rep = 50))
 ## Se convierte el objeto tdm_abstrac en una matriz con frecuencias
 matrix_parrafos = as.matrix(tdm_parrafos)
 dim(matrix_parrafos)
-view(matrix_parrafos)
 
 ## Frecuencia de cada palabra
 frec_words = sort(rowSums(matrix_parrafos),decreasing=T) 
